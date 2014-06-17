@@ -36,7 +36,7 @@ for i = 1:nDirectories
     t.setDirectory(i);
     img(:,:,i) = t.read;  
     if ~mod(i, 200)
-        fprintf('%1.0f frames loaded.\n', i);
+        fprintf('%1.0f frames of %d loaded.\n', i, nDirectories);
     end
 end
 
@@ -48,10 +48,19 @@ if nargout > 1
     imgDesc = t.getTag('ImageDescription');
     imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
     imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
-    for e = imgDescC;
-    	eval([e{:} ';']);
+    if length(imgDescC)>0 %If it's a scanImage4 file
+        for e = imgDescC;
+            eval([e{:} ';']);
+        end
+        varargout{2} = scanimage;
+    else %If it's a scanImage3 file
+        lineDesc = regexp(imgDesc,'state.','start');
+        lineDesc(end+1) = length(imgDesc)+1;
+        for e = 1:length(lineDesc)-1
+            eval([imgDesc(lineDesc(e):lineDesc(e+1)-2) ';']);
+        end
+        varargout{2} = state;
     end
-    varargout{2} = scanimage;
 end
 
 % Close:
