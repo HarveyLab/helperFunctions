@@ -1,6 +1,9 @@
 function varargout = tiffRead(fPath, castType)
 % img = tiffLoad(fPath, [castType]); [img, scanimage] = tiffLoad(fPath);
 
+%turn off warning thrown by reading in scanImage3 files
+warning('off','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
+
 if ~exist('castType', 'var')
     castType = 'double';
 end
@@ -41,6 +44,9 @@ for i = 1:nDirectories
 end
 
 varargout{1} = img;
+
+%turn back on warning to avoid conflicts later
+warning('on','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
 
 % Scanimage metadata: Tiffs saved by Scanimage contain useful metadata in
 % form of a struct. This data can be requested as a second output argument.
