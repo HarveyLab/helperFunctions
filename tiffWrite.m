@@ -14,7 +14,7 @@ if ~exist('filePath', 'var') || isempty(filePath)
 end
 
 if ~exist('option', 'var')
-    option = 16;
+    option = 'uint16';
 end
 
 % Add extension:
@@ -57,12 +57,30 @@ end
 
 % Convert input image to desired bitDepth:
 switch option
-    case 8
+    case 'uint8'
         img = uint8(img);
-    case 16
+        tagStruct.SampleFormat = 1;
+        tagStruct.BitsPerSample = 8;
+    case 'uint16'
         img = uint16(img);
-    case 32
+        tagStruct.SampleFormat = 1;
+        tagStruct.BitsPerSample = 16;
+    case 'uint32'
         img = uint32(img);
+        tagStruct.SampleFormat = 1;
+        tagStruct.BitsPerSample = 32;
+    case 'int8'
+        img = int8(img);
+        tagStruct.SampleFormat = 2;
+        tagStruct.BitsPerSample = 8;
+    case 'int16'
+        img = int16(img);
+        tagStruct.SampleFormat = 2;
+        tagStruct.BitsPerSample = 16;
+    case 'int32'
+        img = int32(img);
+        tagStruct.SampleFormat = 2;
+        tagStruct.BitsPerSample = 32;
     otherwise
         error('Unsupported bit depth.');
 end
@@ -74,7 +92,6 @@ end
 tagStruct.ImageLength = h;
 tagStruct.ImageWidth = w;
 tagStruct.Photometric = Tiff.Photometric.MinIsBlack;
-tagStruct.BitsPerSample = option;
 tagStruct.SamplesPerPixel = 1;
 tagStruct.Compression = 1;
 tagStruct.Software = ['MATLAB:' mfilename];
