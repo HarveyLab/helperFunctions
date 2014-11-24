@@ -13,5 +13,11 @@ switch mode
         f = f-f_+mean(f_);
         
     case 'linear'
-        f = detrend(f);
+%         f = detrend(f);
+        % Detrend is not robust to outliers, so we use robustfit instead:
+        x = 1:numel(f);
+        b = robustfit(x, f);
+        f_ = b(1)+b(2)*x;
+        f = f-f_+mean(f_);
+
 end
