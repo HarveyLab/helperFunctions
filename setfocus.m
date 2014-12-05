@@ -1,4 +1,4 @@
-function setfocus(h);
+function setfocus(h)
 %
 %
 %  sample of a simple apporch to the set a focus to a uicontrol:
@@ -63,8 +63,8 @@ set(0, 'PointerLocation', act_pos);
 import java.awt.Robot;
 import java.awt.event.*;
 mouse = Robot;
-mouse.mousePress(InputEvent.BUTTON1_MASK);
-mouse.mouseRelease(InputEvent.BUTTON1_MASK);
+mouse.mousePress(InputEvent.BUTTON2_MASK);
+mouse.mouseRelease(InputEvent.BUTTON2_MASK);
 
 
 %-----------------------------------------------------------------------------
@@ -81,4 +81,4 @@ end
 set(0, 'Unit', unit_root);
 set(figh, 'Unit', unit_fig);
 set(h, 'Unit', unit_obj);
-drawnow;
+% drawnow;
