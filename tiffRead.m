@@ -1,5 +1,30 @@
-function varargout = tiffRead(fPath, castType)
+function varargout = tiffRead(fPath, castType, isSilent)
 % img = tiffLoad(fPath, [castType]); [img, scanimage] = tiffLoad(fPath);
+
+if ~exist('isSilent', 'var') || isempty(isSilent)
+    isSilent = false;
+end
+
+% Accessing network drives sometimes causes intermittent errors, so we wrap
+% the main code in this error-handling block that retries the disk access
+% once if it fails:
+try
+    varargout = tiffReadMainCode(fPath, castType, nargout, isSilent);
+catch err
+    fprintf('%s got the following error:\n%s', mfilename, getReport(err));
+    fprintf('%s will now wait for some time and try again once.\n', mfilename);
+    
+    pause(60);
+    
+    try
+        varargout = tiffReadMainCode(fPath, castType, nargout, isSilent);
+    catch err
+        fprintf('Retry failed. Re-throwing error:\n');
+        rethrow(err);
+    end
+end
+
+function outArgs = tiffReadMainCode(fPath, castType, nargout, isSilent)
 
 %turn off warning thrown by reading in scanImage3 files
 warning('off','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
@@ -37,13 +62,13 @@ img = zeros(t.getTag('ImageLength'), ...
 
 for i = 1:nDirectories
     t.setDirectory(i);
-    img(:,:,i) = t.read;  
-    if ~mod(i, 200)
+    img(:,:,i) = t.read;
+    if ~isSilent && ~mod(i, 200)
         fprintf('%1.0f frames of %d loaded.\n', i, nDirectories);
     end
 end
 
-varargout{1} = img;
+outArgs{1} = img;
 
 %turn back on warning to avoid conflicts later
 warning('on','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
@@ -54,21 +79,21 @@ if nargout > 1
     imgDesc = t.getTag('ImageDescription');
     imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
     imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
-    if length(imgDescC)>0 %If it's a scanImage4 file
+    if ~isempty(imgDescC) %If it's a scanImage4 file
         for e = imgDescC;
             eval([e{:} ';']);
         end
-        varargout{2} = scanimage;
+        outArgs{2} = scanimage;
     else %If it's a scanImage3 file
         lineDesc = regexp(imgDesc,'state.','start');
         lineDesc(end+1) = length(imgDesc)+1;
         for e = 1:length(lineDesc)-1
             eval([imgDesc(lineDesc(e):lineDesc(e+1)-2) ';']);
         end
-        varargout{2} = state;
+        outArgs{2} = state;
     end
 end
 
 % Close:
 t.close();
-    
+

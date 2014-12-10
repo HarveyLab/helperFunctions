@@ -1,6 +1,30 @@
-function tiffWrite(img, fileName, filePath, option)
+function tiffWrite(img, fileName, filePath, option, isSilent)
 % tiffWrite(img, [fileName], [filePath], [bitDepth/append])
 
+if ~exist('isSilent', 'var') || isempty(isSilent)
+    isSilent = false;
+end
+
+% Accessing network drives sometimes causes intermittent errors, so we wrap
+% the main code in this error-handling block that retries the disk access
+% once if it fails:
+try
+    tiffWriteMainCode(img, fileName, filePath, option, isSilent);
+catch err
+    fprintf('%s got the following error:\n%s', mfilename, getReport(err));
+    fprintf('%s will now wait for some time and try again once.\n', mfilename);
+    
+    pause(60);
+    
+    try
+        tiffWriteMainCode(img, fileName, filePath, option, isSilent);
+    catch err
+        fprintf('Retry failed. Re-throwing error:\n');
+        rethrow(err);
+    end
+end
+
+function tiffWriteMainCode(img, fileName, filePath, option, isSilent)
 if ~isa(img, 'numeric')
     error('First argument must be numeric (image to save).');
 end
@@ -24,7 +48,7 @@ end
 
 % Create folder if necessary:
 if exist(filePath, 'dir') ~= 7
-   mkdir(filePath);
+    mkdir(filePath);
 end
 
 % Create Tiff object:
@@ -52,8 +76,8 @@ if strcmp(option, 'append')
     t.writeDirectory();
     
 else
-    t = Tiff(fullfile(filePath, fileName), 'w'); 
-end 
+    t = Tiff(fullfile(filePath, fileName), 'w');
+end
 
 % Convert input image to desired bitDepth:
 switch option
@@ -105,7 +129,7 @@ for i = 2:z
     t.writeDirectory();
     t.setTag(tagStruct);
     t.write(img(:,:,i));
-    if ~mod(i, 200)
+    if ~isSilent && ~mod(i, 200)
         fprintf('%1.0f frames written.\n', i);
     end
 end
