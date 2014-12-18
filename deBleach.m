@@ -1,5 +1,6 @@
-function f = deBleach(f, mode)
+function f = deBleach(f, mode, varargin)
 % f = deBleach(f, mode) removes bleaching 
+% f = deBleach(f, 'runningAvg', FrameWidth) specifies width of avg window
 
 switch mode
     case 'exponential'
@@ -19,5 +20,13 @@ switch mode
         b = robustfit(x, f);
         f_ = b(1)+b(2)*x;
         f = f-f_+mean(f_);
-
+    
+    case 'runningAvg'
+        fWid = varargin{1};
+        avgFilt = ones(fWid,1)/fWid;
+        prePad = floor((fWid-1)/2);
+        postPad = ceil((fWid-1)/2);
+        f_ = conv(f,avgFilt,'valid');
+        f_ = [f_(1)*ones(prePad,1); f_(:); f_(end)*ones(postPad,1)]';
+        f = f-f_+mean(f_);        
 end
