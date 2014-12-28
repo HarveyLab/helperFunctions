@@ -1,6 +1,10 @@
 function varargout = tiffRead(fPath, castType, isSilent)
 % img = tiffLoad(fPath, [castType]); [img, scanimage] = tiffLoad(fPath);
 
+if ~exist('castType', 'var') || isempty(castType)
+    castType = 'double';
+end
+
 if ~exist('isSilent', 'var') || isempty(isSilent)
     isSilent = false;
 end
