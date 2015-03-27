@@ -1,6 +1,6 @@
 function binned = binSpatial(mov, factor)
 % binned = bin_mov(mov, factor) spatially bins the Y-by-X-by-nFrames movie
-% by an integer factor: Each new pixel is the sum of factor-by-factor old
+% by an integer factor: Each new pixel is the average of factor-by-factor old
 % pixels. If the dimensions of mov do not match, pixels are discarded at 
 % the edges.
 
@@ -24,11 +24,11 @@ if mod(h, factor)
 end
 
 % Bin along columns:
-mov = sum(reshape(mov,factor,[]) ,1);
+mov = mean(reshape(mov,factor,[]) ,1);
 
 % Bin along rows:
 mov = reshape(mov, h/factor, []).';       %Note transpose
-mov = sum(reshape(mov, factor, []) ,1);
+mov = mean(reshape(mov, factor, []) ,1);
 
 % Bring dimensions back in order:
 mov = reshape(mov, w/factor, z, h/factor);
