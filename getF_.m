@@ -3,10 +3,16 @@ function f_ = getF_(f,mode)
 % default mode is linear, w/ robust fit estimation
 
 if ~exist('mode','var') || isempty(mode)
-    mode = 'linear';
+    mode = 'exp_linear';
 end
 
 switch mode
+    case 'exp_linear'
+        x = linspace(-1,1,length(f));
+        xExp = exp(-x);
+        b = robustfit([x',xExp'],f);
+        f_ = [ones(length(f),1),x',xExp'] * b;
+        f_ = f_';
     case 'exponential'
         % Robustly fit a straight line to log(fluorescence) and then
         % subtract exp(straightLine).
