@@ -1,5 +1,8 @@
 function varargout = tiffRead(fPath, castType, isSilent)
-% img = tiffLoad(fPath, [castType]); [img, scanimage] = tiffLoad(fPath);
+% [img, metadata] = tiffRead(fPath, castType, isSilent)
+
+%turn off warning thrown by reading in scanImage3 files
+warning('off','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
 
 if ~exist('castType', 'var') || isempty(castType)
     castType = 'double';
@@ -7,34 +10,6 @@ end
 
 if ~exist('isSilent', 'var') || isempty(isSilent)
     isSilent = false;
-end
-
-% Accessing network drives sometimes causes intermittent errors, so we wrap
-% the main code in this error-handling block that retries the disk access
-% once if it fails:
-try
-    varargout = tiffReadMainCode(fPath, castType, nargout, isSilent);
-catch err
-    fprintf('%s got the following error:\n%s', mfilename, getReport(err));
-    fprintf('%s will now wait for some time and try again once.\n', mfilename);
-    
-    pause(60);
-    
-    try
-        varargout = tiffReadMainCode(fPath, castType, nargout, isSilent);
-    catch err
-        fprintf('Retry failed. Re-throwing error:\n');
-        rethrow(err);
-    end
-end
-
-function outArgs = tiffReadMainCode(fPath, castType, nargout, isSilent)
-
-%turn off warning thrown by reading in scanImage3 files
-warning('off','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
-
-if ~exist('castType', 'var')
-    castType = 'double';
 end
 
 % Gracefully handle missing extension:
@@ -72,7 +47,7 @@ for i = 1:nDirectories
     end
 end
 
-outArgs{1} = img;
+varargout{1} = img;
 
 %turn back on warning to avoid conflicts later
 warning('on','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
@@ -87,17 +62,16 @@ if nargout > 1
         for e = imgDescC;
             eval([e{:} ';']);
         end
-        outArgs{2} = scanimage;
+        varargout{2} = scanimage;
     else %If it's a scanImage3 file
         lineDesc = regexp(imgDesc,'state.','start');
         lineDesc(end+1) = length(imgDesc)+1;
         for e = 1:length(lineDesc)-1
             eval([imgDesc(lineDesc(e):lineDesc(e+1)-2) ';']);
         end
-        outArgs{2} = state;
+        varargout{2} = state;
     end
 end
 
 % Close:
 t.close();
-

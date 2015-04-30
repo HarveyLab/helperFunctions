@@ -1,30 +1,6 @@
 function tiffWrite(img, fileName, filePath, option, isSilent)
-% tiffWrite(img, [fileName], [filePath], [bitDepth/append])
+% tiffWrite(img, fileName, filePath, option, isSilent)
 
-if ~exist('isSilent', 'var') || isempty(isSilent)
-    isSilent = false;
-end
-
-% Accessing network drives sometimes causes intermittent errors, so we wrap
-% the main code in this error-handling block that retries the disk access
-% once if it fails:
-try
-    tiffWriteMainCode(img, fileName, filePath, option, isSilent);
-catch err
-    fprintf('%s got the following error:\n%s', mfilename, getReport(err));
-    fprintf('%s will now wait for some time and try again once.\n', mfilename);
-    
-    pause(60);
-    
-    try
-        tiffWriteMainCode(img, fileName, filePath, option, isSilent);
-    catch err
-        fprintf('Retry failed. Re-throwing error:\n');
-        rethrow(err);
-    end
-end
-
-function tiffWriteMainCode(img, fileName, filePath, option, isSilent)
 if ~isa(img, 'numeric')
     error('First argument must be numeric (image to save).');
 end
