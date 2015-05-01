@@ -17,6 +17,10 @@ if ~exist('option', 'var')
     option = 'uint16';
 end
 
+if ~exist('isSilent', 'var') || isempty(isSilent)
+    isSilent = false;
+end
+
 % Add extension:
 if isempty(regexp(fileName, '\.tiff?$', 'ignorecase'))
     fileName = [fileName, '.tif'];
