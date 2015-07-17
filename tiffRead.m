@@ -58,11 +58,11 @@ if nargout > 1
     imgDesc = t.getTag('ImageDescription');
     imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
     imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
-    if ~isempty(imgDescC) %If it's a scanImage4 file
+    if ~isempty(imgDescC) %If it's a scanImage4 or later file
         for e = imgDescC;
-            eval([e{:} ';']);
+            eval(['s.' e{:} ';']);
         end
-        varargout{2} = scanimage;
+        varargout{2} = s.scanimage;
     else %If it's a scanImage3 file
         lineDesc = regexp(imgDesc,'state.','start');
         lineDesc(end+1) = length(imgDesc)+1;
