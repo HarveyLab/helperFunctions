@@ -1,8 +1,8 @@
-function f = deBleach(f, mode, varargin)
+function [f, stats] = deBleach(f, mode, varargin)
 % f = deBleach(f, mode) removes bleaching 
 % f = deBleach(f, 'runningAvg', FrameWidth) specifies width of avg window
 
-f_ = getF_(f,mode);
+[f_, stats] = getF_(f,mode);
 f = f-f_+mean(f_);
 % switch mode
 %     case 'exponential'
