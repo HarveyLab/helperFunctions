@@ -17,7 +17,7 @@ switch mode
     case 'exp_linear'
         x = linspace(-1,1,length(f));
         xExp = exp(-x);
-        b = robustfit([x',xExp'],f);
+        b = robustfit([x',xExp'],f,'bisquare',2);
         f_ = [ones(length(f),1),x',xExp'] * b;
         f_ = f_';
         
@@ -27,14 +27,14 @@ switch mode
         f(f<0.1) = 0.1; % So that log() works without imaginary issues.
         fl = log(f);
         x = 1:numel(f);
-        b = robustfit(x, fl);
+        b = robustfit(x, fl,'bisquare',2);
         f_ = exp(b(1)+b(2)*x);
         
     case 'linear'
 %         f = detrend(f);
         % Detrend is not robust to outliers, so we use robustfit instead:
         x = 1:numel(f);
-        b = robustfit(x, f);
+        b = robustfit(x, f,'bisquare',2);
         f_ = b(1)+b(2)*x;
         
     case 'prctile'
