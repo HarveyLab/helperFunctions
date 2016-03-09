@@ -58,8 +58,9 @@ if nargout > 1
     imgDesc = t.getTag('ImageDescription');
     imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
     imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
+    imgDescC = strrep(imgDescC, '<unencodeable value>', 'NaN');
     if ~isempty(imgDescC) %If it's a scanImage4 or later file
-        for e = imgDescC;
+        for e = imgDescC
             eval(['s.' e{:} ';']);
         end
         varargout{2} = s.scanimage;
