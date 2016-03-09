@@ -55,22 +55,6 @@ warning('on','MATLAB:imagesci:tiffmexutils:libtiffWarning'),
 % Scanimage metadata: Tiffs saved by Scanimage contain useful metadata in
 % form of a struct. This data can be requested as a second output argument.
 if nargout > 1
-<<<<<<< HEAD
-    imgDesc = t.getTag('ImageDescription');
-    imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
-    imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
-    imgDescC = strrep(imgDescC, '<unencodeable value>', 'NaN');
-    if ~isempty(imgDescC) %If it's a scanImage4 or later file
-        for e = imgDescC
-            eval(['s.' e{:} ';']);
-        end
-        varargout{2} = s.scanimage;
-    else %If it's a scanImage3 file
-        lineDesc = regexp(imgDesc,'state.','start');
-        lineDesc(end+1) = length(imgDesc)+1;
-        for e = 1:length(lineDesc)-1
-            eval([imgDesc(lineDesc(e):lineDesc(e+1)-2) ';']);
-=======
     % Check if this Tiff has valid scanimage metadata and get version:
     try
         imgDesc = t.getTag('ImageDescription');
@@ -86,7 +70,6 @@ if nargout > 1
             scanImageVersion = 3;
         else
             scanImageVersion = -1;
->>>>>>> origin/master
         end
     end
     
@@ -101,6 +84,7 @@ if nargout > 1
         case 4
             imgDescC = regexp(imgDesc, 'scanimage\..+? = .+?(?=\n)', 'match');
             imgDescC = strrep(imgDescC, '<nonscalar struct/object>', 'NaN');
+            imgDescC = strrep(imgDescC, '<unencodeable value>', 'NaN');
             for e = imgDescC;
                 eval(['s.' e{:} ';']);
             end
