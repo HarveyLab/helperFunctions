@@ -21,6 +21,7 @@ function w = wfun(r)
     % Inliers are points where residuals (i.e. baseline-subtracted F)
     % are close to local 8th percentile of residuals.
     w = 1 * (abs(rOrig - baseEstimate)<prctile(abs(rOrig - baseEstimate), 10));
+    %w = 1 * (abs(rOrig - baseEstimate)<prctile(abs(rOrig - baseEstimate), 25));
 end
 
 % Maybe bin instead of smooth?

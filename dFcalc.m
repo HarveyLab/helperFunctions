@@ -1,7 +1,7 @@
 function dF = dFcalc(subTrace,rawTrace,mode)
 
 if ~exist('mode','var') || isempty(mode)
-    mode = 'exp_linear';
+    mode = 'custom_wfun';
 end
 
 nSigs = size(subTrace,1);
