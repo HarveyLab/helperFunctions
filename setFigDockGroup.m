@@ -93,7 +93,7 @@ function hGroupContainer = setFigDockGroup(varargin)
 
   try
       % Sanity checks before starting...
-      error(nargchk(1,inf,nargin,'struct'));
+      narginchk(1,inf);
 
       % Require Java engine to run
       if ~usejava('jvm')
