@@ -28,7 +28,9 @@ end
 winSize = 60;
 f = conv(f, ones(winSize, 1)/winSize, 'same');
 
+warnState = warning('off', 'stats:statrobustfit:IterationLimit');
 [b, stats] = robustfit([x',xExp'],f', @wfun, 1.5);
+warning(warnState);
 % disp(b(1));
 
 f_ = [ones(length(f), 1), x', xExp'] * b;
