@@ -3,7 +3,7 @@ function [f_, stats] = getF_(f, mode, winSize)
 % default mode is linear, w/ robust fit estimation
 
 if ~exist('mode','var') || isempty(mode)
-    mode = 'exp_linear';
+    mode = 'custom_wfun';
 end
 
 if ~exist('winSize','var') || isempty(winSize)
