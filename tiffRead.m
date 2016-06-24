@@ -68,6 +68,8 @@ if nargout > 1
             scanImageVersion = 4;
         elseif ~isempty(strfind(imgDesc, 'state.'))
             scanImageVersion = 3;
+        elseif ~isempty(strfind(imgDesc, 'dcOverVoltage'))
+            scanImageVersion = 2016;
         else
             scanImageVersion = -1;
         end
@@ -89,6 +91,9 @@ if nargout > 1
                 eval(['s.' e{:} ';']);
             end
             varargout{2} = s.scanimage;
+        case 2016
+            siHeader = scanimage.util.opentif(fPath);
+            varargout{2} = siHeader;
         case -1
             % Not a scanimage file. Since a second output argument was
             % requested, we use a fake scanimage metadata to make the Acq2P
