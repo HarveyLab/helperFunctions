@@ -92,8 +92,15 @@ if nargout > 1
             end
             varargout{2} = s.scanimage;
         case 2016
-            siHeader = scanimage.util.opentif(fPath);
-            varargout{2} = siHeader;
+            info = imfinfo(fPath);
+            temp = info.Software;
+            ind = strfind(temp,'SI.');
+            temp(ind(2:end)-1) = ';';
+            temp(end) = ';';
+            eval(temp);
+            varargout{2} = SI;
+            % siHeader = scanimage.util.opentif(fPath);
+            % varargout{2} = siHeader;
         case -1
             % Not a scanimage file. Since a second output argument was
             % requested, we use a fake scanimage metadata to make the Acq2P
