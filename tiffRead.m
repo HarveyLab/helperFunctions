@@ -2,8 +2,8 @@ function varargout = tiffRead(fPath, castType, isSilent)
 % [img, metadata, frameDescriptions] = tiffRead(fPath, castType, isSilent)
 
 
-if ~exist('castType', 'var') || isempty(castType)
-    castType = 'double';
+if ~exist('castType', 'var')
+    castType = [];
 end
 
 if ~exist('isSilent', 'var') || isempty(isSilent)
@@ -22,7 +22,24 @@ if exist(fPath, 'file') ~= 2
 end
 
 siTifObj = ScanImageTiffReader(fPath);
-varargout{1} = data(siTifObj);
+if isempty(castType)
+    varargout{1} = data(siTifObj);
+else
+    imgStack = data(siTifObj);
+    switch castType
+        case 'double'
+            imgStack = double(imgStack);
+        case 'single'
+            imgStack = single(imgStack);
+        case 'int16'
+            imgStack = int16(imgStack);
+        case 'uint16'
+            imgStack = uint16(imgStack);
+    end
+    varargout{1} = imgStack;
+end
+    
+
 if nargout > 1
     metaDataText = metadata(siTifObj);
     lineInd = strfind(metaDataText,'SI.');
