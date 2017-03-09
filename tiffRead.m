@@ -23,22 +23,20 @@ end
 
 siTifObj = ScanImageTiffReader(fPath);
 if isempty(castType)
-    varargout{1} = permute(data(siTifObj),[2 1 3]);
-else
     imgStack = data(siTifObj);
+else
     switch castType
         case 'double'
-            imgStack = double(imgStack);
+            imgStack = double(data(siTifObj));
         case 'single'
-            imgStack = single(imgStack);
+            imgStack = single(data(siTifObj));
         case 'int16'
-            imgStack = int16(imgStack);
+            imgStack = int16(data(siTifObj));
         case 'uint16'
-            imgStack = uint16(imgStack);
+            imgStack = uint16(data(siTifObj));
     end
-    varargout{1} = imgStack;
 end
-    
+varargout{1} = permute(imgStack,[2 1 3]);
 
 if nargout > 1
     metaDataText = metadata(siTifObj);
