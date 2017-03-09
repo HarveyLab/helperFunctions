@@ -23,7 +23,7 @@ end
 
 siTifObj = ScanImageTiffReader(fPath);
 if isempty(castType)
-    varargout{1} = data(siTifObj);
+    varargout{1} = permute(data(siTifObj),[2 1 3]);
 else
     imgStack = data(siTifObj);
     switch castType
